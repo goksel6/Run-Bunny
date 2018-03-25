@@ -5,22 +5,24 @@ using UnityEngine;
 public class Path : MonoBehaviour {
     public bool active;
     public GameObject[] objects;
-	// Use this for initialization
 	void Start () {
 		
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
         if (active)
         {
-            Invoke("Move", 5);
+          
+            Invoke("Move",5);
             active = false;
         }
 	}
     private void Move()
-    {
-        //objects[0].transform.localPosition = new Vector2();
-        transform.position = transform.position + new Vector3(+92.414f, 0,0);
+    { 
+        transform.position = transform.position + new Vector3(38.636f, 0, 0);
+        for (int i = 0; i < 9; i++)
+        {
+            objects[i].SetActive(true);
+        }
     } 
 }

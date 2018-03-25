@@ -4,22 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Char_Code : MonoBehaviour {
+
+    public GameObject[] lifes;
+    public GameObject gameOverPanel, gamePanel;
+
     public Text distanceText, longestDistanceText;
-
-
+    public Text carrotText, goldText, totalScore;
     public Text mesafeoyunsonuyazi, skormesafeyazi;
+    public Text goldCount, carrotCount;
 
     public float speed, jumpForce, maxSpeed, distance, longestDistance=0;
-    public Transform startPoint;
-    public bool onGround, doubleJump;
-    Rigidbody2D weight;
-    Animator animator;
     public int life, maxLife, carrot, gold;
-    public GameObject[] lifes;
-    public Text goldCount, carrotCount;
+    public bool onGround, doubleJump;
+
+    public Transform startPoint;
     public AudioClip[] sounds;
 
-    public GameObject gameOverPanel;
+    Rigidbody2D weight;
+    Animator animator;
 
 	void Start () {
         gameOverPanel.SetActive (false);
@@ -56,22 +58,27 @@ public class Char_Code : MonoBehaviour {
             Die();
         }
 	}
+
     private void OnTriggerEnter2D(Collider2D obj)
     {
-        if(obj.gameObject.tag == "Carrot")
+        if (obj.gameObject.tag == "Gate")
+        {
+            carrot++;
+            obj.gameObject.transform.root.gameObject.GetComponent<Path>().active = true;
+        }
+        if (obj.gameObject.tag == "Carrot")
         {
             carrot++;
             GetComponent<AudioSource>().PlayOneShot(sounds[0]);
-            Destroy(obj.gameObject);
-            obj.gameObject.transform.root.gameObject.GetComponent<Path>().active = true;
+            obj.gameObject.SetActive(false);
+            
 
         }
         if (obj.gameObject.tag == "Gold")
         {
             gold++;
             GetComponent<AudioSource>().PlayOneShot(sounds[1]);
-            Destroy(obj.gameObject);
-            obj.gameObject.transform.root.gameObject.GetComponent<Path>().active = true;
+            obj.gameObject.SetActive(false);
 
         }
         if (obj.gameObject.tag == "Life")
@@ -119,7 +126,6 @@ public class Char_Code : MonoBehaviour {
     {
         Time.timeScale = 0;
         GameOver();
-        Button b = gameObject.GetComponent<Button>();
         
         if (false)
         {
@@ -161,8 +167,15 @@ public class Char_Code : MonoBehaviour {
     void GameOver()
     {
         gameOverPanel.SetActive(true);
+        gamePanel.SetActive(false);
         mesafeoyunsonuyazi.text = "DISTANCE: " + (int)distance + "M";
         longestDistance = PlayerPrefs.GetFloat("BEST: ");
+
+        goldText.text = "" + (int)gold;
+        carrotText.text = "" + (int)carrot;
+        int x = ((gold * 4) + (carrot * 2) + ((int)distance * 3));
+        totalScore.text = "TOTAL SCORE: " + (int)x;
+
         if (longestDistance>distance)
         {
             skormesafeyazi.text = "BEST: " + (int)longestDistance + "M";
@@ -174,5 +187,13 @@ public class Char_Code : MonoBehaviour {
             mesafeoyunsonuyazi.text = "DISTANCE: " + (int)longestDistance + "M";
             skormesafeyazi.text = "BEST: " + (int)longestDistance + "M";
         }
+
+        
+    }
+    public void ButtonClick()
+    {
+        gameOverPanel.SetActive(false);
+        Application.LoadLevel(Application.loadedLevel);
+
     }
 }
